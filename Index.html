@@ -33,6 +33,32 @@
   .wrap { margin: 20px auto; }
 }
 
+    .loader-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s ease;
+  z-index: 9999;
+}
+.loader-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+.spinner {
+  width: 38px;
+  height: 38px;
+  border: 3px solid rgba(220, 65, 40, 0.2);
+  border-top-color: #DC4128;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
   </style>
 </head>
 
@@ -109,5 +135,39 @@
       }catch(err){showToast("⚠️ Submission failed");console.error(err);}
     };
   </script>
+
+  <div id="loader" class="loader-overlay">
+  <div class="spinner"></div>
+</div>
+
+<script>
+const loader = document.getElementById('loader');
+
+async function loadOptions() {
+  loader.classList.add("active");
+  try {
+    const res = await fetch(`${scriptBaseURL}?type=getFieldOptions`, { cache: "no-store" });
+    const text = await res.text();
+    const data = JSON.parse(text);
+    const sel = (id, arr) => {
+      const el = document.getElementById(id);
+      el.innerHTML = '<option value="">Select...</option>';
+      arr.forEach(v => el.innerHTML += `<option>${v}</option>`);
+    };
+    sel("companyName", data.companies);
+    sel("materialsType", data.materials);
+    sel("jobSite", data.jobSites);
+    sel("driver", data.drivers);
+    sel("toSiteToken", data.toSiteTokens);
+    sel("fromSiteToken", data.fromSiteTokens);
+    showToast("✅ loaded successfully");
+  } catch (err) {
+    console.error("Load error:", err);
+    showToast("⚠️ Error loading options");
+  } finally {
+    loader.classList.remove("active");
+  }
+}
+
 </body>
 </html>
