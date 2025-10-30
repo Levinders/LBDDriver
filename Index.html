@@ -76,19 +76,20 @@
         <label>Date</label><input type="date" id="dateISO" />
       </div>
 
-      <div class="section">
-        <div class="section-title">Site & Driver</div>
-        <label>Job Site</label><select id="jobSite"></select>
-        <label>Driver</label><select id="driver"></select>
-      </div>
+<div class="section">
+  <div class="section-title">Site & Vehicle</div>
+  <label>From Job Site</label><select id="fromJobSite"></select>
+  <label>To Job Site</label><select id="toJobSite"></select>
+  <label>Car Plate</label><select id="carPlate"></select>
+</div>
 
-      <div class="section">
-        <div class="section-title">Weights & Tokens</div>
-        <label>Tonnage</label><input type="number" id="tonnage" />
-        <label>Token (Last 4)</label><input type="text" id="tokenLast4" maxlength="4" />
-        <label>To Site Token</label><select id="toSiteToken"></select>
-        <label>From Site Token</label><select id="fromSiteToken"></select>
-      </div>
+<div class="section">
+  <div class="section-title">Driver & Tokens</div>
+  <label>Driver</label><select id="driver"></select>
+  <label>Token Site</label><select id="tokenSite"></select>
+  <label>Tonnage</label><input type="number" id="tonnage" />
+  <label>Token (Last 4)</label><input type="text" id="tokenLast4" maxlength="4" />
+</div>
 
       <div class="section">
         <div class="section-title">E-Signature</div>
@@ -125,8 +126,19 @@
 
     document.getElementById("submitBtn").onclick=async()=>{
       const d=id=>document.getElementById(id).value;
-      const payload={companyName:d("companyName"),materialsType:d("materialsType"),dateISO:d("dateISO").replace(/-/g,'/'),
-      jobSite:d("jobSite"),driver:d("driver"),tonnage:d("tonnage"),tokenLast4:d("tokenLast4"),toSiteToken:d("toSiteToken"),fromSiteToken:d("fromSiteToken"),signatureDataURL:document.getElementById("sigPad").outerHTML};
+      const payload = {
+      companyName: d("companyName"),
+      materialsType: d("materialsType"),
+      dateISO: d("dateISO").replace(/-/g, '/'),
+      fromJobSite: d("fromJobSite"),
+      toJobSite: d("toJobSite"),
+      carPlate: d("carPlate"),
+      driver: d("driver"),
+      tokenSite: d("tokenSite"),
+      tonnage: d("tonnage"),
+      tokenLast4: d("tokenLast4"),
+      signatureDataURL: document.getElementById("sigPad").outerHTML
+      };
       showToast("Submitting...");
       try{
         const res=await fetch(scriptBaseURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
@@ -157,10 +169,11 @@ async function loadOptions() {
     };
     sel("companyName", data.companies);
     sel("materialsType", data.materials);
-    sel("jobSite", data.jobSites);
+    sel("fromJobSite", data.fromJobSites);
+    sel("toJobSite", data.toJobSites);
+    sel("carPlate", data.carPlates);
     sel("driver", data.drivers);
-    sel("toSiteToken", data.toSiteTokens);
-    sel("fromSiteToken", data.fromSiteTokens);
+    sel("tokenSite", data.tokenSites);
     showToast("✅ loaded successfully");
   } catch (err) {
     console.error("Load error:", err);
