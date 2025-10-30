@@ -4,62 +4,192 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dispatch & Disposal</title>
+
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
   <style>
-    body{margin:0;font-family:'Inter',sans-serif;background:#f9fafb;color:#1f2937;}
-    .wrap{max-width:700px;margin:50px auto;padding:20px;}
-    .card{background:#fff;border-radius:14px;box-shadow:0 4px 20px rgba(0,0,0,0.05);padding:36px;}
-    h1{margin:0 0 8px;font-size:24px;font-weight:600;}
-    .sub{color:#6b7280;font-size:14px;margin-bottom:30px;}
-    .section{margin-bottom:36px;}
-    .section-title{color:#DC4128;font-weight:600;border-left:4px solid #DC4128;padding-left:10px;margin-bottom:18px;font-size:17px;}
-    label{display:block;font-weight:500;margin-bottom:6px;font-size:14px;}
-    input,select{width:100%;padding:12px;border:1px solid #e5e7eb;border-radius:10px;margin-bottom:16px;font-size:15px;}
-    #dateISO {width: 90%;min-width: 180px;}   
-    input:focus,select:focus{border-color:#DC4128;outline:none;box-shadow:0 0 0 3px rgba(220,65,40,0.15);}
-    .sig-pad{border:2px dashed #e5e7eb;border-radius:12px;padding:20px;text-align:center;}
-    #typedSignature{font-family:'Great Vibes',cursive;font-size:42px;color:#000;position:relative;display:inline-block;}
-    #typedSignature svg{position:absolute;bottom:-10px;left:0;width:100%;height:20px;}
-    #typedDate{font-size:13px;color:#555;margin-top:16px;}
-    .btn{alignment:center;width:150px;background:#DC4128;color:#fff;border:none;border-radius:10px;padding:12px 20px;font-weight:500;cursor:pointer;}
-    .btn:hover{background:#f25c41;}
-    .toast{position:fixed;bottom:20px;right:20px;background:#1f2937;color:#fff;padding:12px 20px;border-radius:8px;opacity:0;transform:translateY(20px);transition:all 0.4s ease;}
-    .toast.show{opacity:1;transform:translateY(0);}
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #f9fafb;
+      color: #1f2937;
+    }
 
+    .wrap {
+      max-width: 700px;
+      margin: 50px auto;
+      padding: 20px;
+    }
 
-    @media (max-width: 700px) {
-  .card { padding: 24px; }
-  .wrap { margin: 20px auto; }
-  .btn{width:100%;}
-}
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      padding: 36px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .sub {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    .section {
+      margin-bottom: 36px;
+    }
+
+    .section-title {
+      color: #DC4128;
+      font-weight: 600;
+      border-left: 4px solid #DC4128;
+      padding-left: 10px;
+      margin-bottom: 18px;
+      font-size: 17px;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      font-size: 15px;
+    }
+
+    #dateISO {
+      width: 90%;
+      min-width: 180px;
+    }
+
+    input:focus, select:focus {
+      border-color: #DC4128;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(220, 65, 40, 0.15);
+    }
+
+    .sig-pad {
+      border: 2px dashed #e5e7eb;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      background: #fff;
+    }
+
+    #typedSignature {
+      font-family: 'Great Vibes', cursive;
+      font-size: 42px;
+      color: #000;
+      position: relative;
+      display: inline-block;
+      margin-bottom: 6px;
+      transition: all 0.3s ease;
+    }
+
+    #typedSignature svg {
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 20px;
+    }
+
+    #typedDate {
+      font-size: 13px;
+      color: #555;
+      margin-top: 16px;
+    }
+
+    .btn {
+      display: block;
+      margin: 0 auto;
+      width: 180px;
+      background: #DC4128;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #f25c41;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #1f2937;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s ease;
+      z-index: 10000;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     .loader-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.4s ease;
-  z-index: 9999;
-}
-.loader-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-.spinner {
-  width: 38px;
-  height: 38px;
-  border: 3px solid rgba(220, 65, 40, 0.2);
-  border-top-color: #DC4128;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s ease;
+      z-index: 9999;
+    }
 
+    .loader-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .spinner {
+      width: 38px;
+      height: 38px;
+      border: 3px solid rgba(220, 65, 40, 0.2);
+      border-top-color: #DC4128;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 700px) {
+      .card { padding: 24px; }
+      .wrap { margin: 20px auto; }
+      .btn { width: 100%; }
+    }
   </style>
 </head>
 
@@ -69,6 +199,7 @@
       <h1>Dispatch & Disposal</h1>
       <div class="sub">Complete all fields and submit</div>
 
+      <!-- Company & Material -->
       <div class="section">
         <div class="section-title">Company & Material</div>
         <label>Company</label><select id="companyName"></select>
@@ -76,21 +207,24 @@
         <label>Date</label><input type="date" id="dateISO" />
       </div>
 
-<div class="section">
-  <div class="section-title">Site & Vehicle</div>
-  <label>From Job Site</label><select id="fromJobSite"></select>
-  <label>To Job Site</label><select id="toJobSite"></select>
-  <label>Car Plate</label><select id="carPlate"></select>
-</div>
+      <!-- Site & Vehicle -->
+      <div class="section">
+        <div class="section-title">Site & Vehicle</div>
+        <label>From Job Site</label><select id="fromJobSite"></select>
+        <label>To Job Site</label><select id="toJobSite"></select>
+        <label>Car Plate</label><select id="carPlate"></select>
+      </div>
 
-<div class="section">
-  <div class="section-title">Driver & Tokens</div>
-  <label>Driver</label><select id="driver"></select>
-  <label>Token Site</label><select id="tokenSite"></select>
-  <label>Tonnage</label><input type="number" id="tonnage" />
-  <label>Token (Last 4)</label><input type="text" id="tokenLast4" maxlength="4" />
-</div>
+      <!-- Driver & Tokens -->
+      <div class="section">
+        <div class="section-title">Driver & Tokens</div>
+        <label>Driver</label><select id="driver"></select>
+        <label>Token Site</label><select id="tokenSite"></select>
+        <label>Tonnage</label><input type="number" id="tonnage" />
+        <label>Token (Last 4)</label><input type="text" id="tokenLast4" maxlength="4" />
+      </div>
 
+      <!-- E-Signature -->
       <div class="section">
         <div class="section-title">E-Signature</div>
         <div class="sig-pad" id="sigPad">
@@ -105,83 +239,117 @@
     </div>
   </div>
 
+  <!-- Toast -->
   <div id="toast" class="toast"></div>
 
-  <script>
-    const scriptBaseURL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbzI3307wxHIub3m3-o3Km_LKsBdPUWupiJC2cxoCwjZL5GwKbXx7UfGHPxKPDSvD8Qi/exec");
-
-    function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3000);}
-
-    async function loadOptions(){
-      try{
-        const res=await fetch(`${scriptBaseURL}?type=getFieldOptions`,{cache:"no-store"});
-        const text=await res.text();
-        const data=JSON.parse(text);
-        const sel=(id,arr)=>{const el=document.getElementById(id);el.innerHTML='<option value="">Select...</option>';arr.forEach(v=>el.innerHTML+=`<option>${v}</option>`);}
-        sel("companyName",data.companies);sel("materialsType",data.materials);sel("jobSite",data.jobSites);sel("driver",data.drivers);sel("toSiteToken",data.toSiteTokens);sel("fromSiteToken",data.fromSiteTokens);
-        showToast("✅ loaded successfully");
-      }catch(err){console.error("Load error:",err);showToast("⚠️ Error loading options");}
-    }
-    loadOptions();
-
-    document.getElementById("submitBtn").onclick=async()=>{
-      const d=id=>document.getElementById(id).value;
-      const payload = {
-      companyName: d("companyName"),
-      materialsType: d("materialsType"),
-      dateISO: d("dateISO").replace(/-/g, '/'),
-      fromJobSite: d("fromJobSite"),
-      toJobSite: d("toJobSite"),
-      carPlate: d("carPlate"),
-      driver: d("driver"),
-      tokenSite: d("tokenSite"),
-      tonnage: d("tonnage"),
-      tokenLast4: d("tokenLast4"),
-      signatureDataURL: document.getElementById("sigPad").outerHTML
-      };
-      showToast("Submitting...");
-      try{
-        const res=await fetch(scriptBaseURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-        const text=await res.text();console.log(text);
-        const data=JSON.parse(text);
-        showToast(data.message||"✅ Record saved!");
-      }catch(err){showToast("⚠️ Submission failed");console.error(err);}
-    };
-  </script>
-
+  <!-- Loader -->
   <div id="loader" class="loader-overlay">
-  <div class="spinner"></div>
-</div>
+    <div class="spinner"></div>
+  </div>
 
-<script>
-const loader = document.getElementById('loader');
+  <script>
+    const scriptBaseURL =
+      "https://corsproxy.io/?" +
+      encodeURIComponent("https://script.google.com/macros/s/AKfycbwA8zf4eHUhotmTwo8U-AD71si9VVJvkkVfE0eO6upK9RbfmS0kMVUffvxKy77sgW4/exec");
 
-async function loadOptions() {
-  loader.classList.add("active");
-  try {
-    const res = await fetch(`${scriptBaseURL}?type=getFieldOptions`, { cache: "no-store" });
-    const text = await res.text();
-    const data = JSON.parse(text);
-    const sel = (id, arr) => {
-      const el = document.getElementById(id);
-      el.innerHTML = '<option value="">Select...</option>';
-      arr.forEach(v => el.innerHTML += `<option>${v}</option>`);
+    const loader = document.getElementById("loader");
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 3000);
+    }
+
+    /** ✅ Load dropdown data */
+    async function loadOptions() {
+      loader.classList.add("active");
+      try {
+        const res = await fetch(`${scriptBaseURL}?type=getFieldOptions`, { cache: "no-store" });
+        const text = await res.text();
+        if (text.startsWith("<")) throw new Error("Invalid JSON response (HTML received)");
+        const data = JSON.parse(text);
+
+        const sel = (id, arr) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.innerHTML = '<option value="">Select...</option>';
+          arr.forEach(v => (el.innerHTML += `<option>${v}</option>`));
+        };
+
+        sel("companyName", data.companies);
+        sel("materialsType", data.materials);
+        sel("fromJobSite", data.fromJobSites);
+        sel("toJobSite", data.toJobSites);
+        sel("carPlate", data.carPlates);
+        sel("driver", data.drivers);
+        sel("tokenSite", data.tokenSites);
+
+        showToast("✅ Options loaded successfully");
+      } catch (err) {
+        console.error("⚠️ Load error:", err);
+        showToast("⚠️ Error loading options");
+      } finally {
+        loader.classList.remove("active");
+      }
+    }
+
+    /** ✅ Live signature update */
+    const driverSelect = document.getElementById("driver");
+    const typedSignature = document.getElementById("typedSignature");
+    const typedDate = document.getElementById("typedDate");
+
+    function updateSignature() {
+      const name = driverSelect.value.includes('-')
+        ? driverSelect.value.split('-').pop().trim()
+        : driverSelect.value || "Sample Name";
+      const today = new Date();
+      const formatted = `${today.getFullYear()}/${String(today.getMonth() + 1).padStart(2, '0')}/${String(today.getDate()).padStart(2, '0')}`;
+      typedSignature.innerHTML = `${name}<svg><path d="M0 10 Q50 0, 120 10 T260 10" stroke="#000" stroke-width="1.2" fill="transparent"/></svg>`;
+      typedDate.textContent = formatted;
+    }
+
+    driverSelect.addEventListener("change", updateSignature);
+
+    /** ✅ Form submission */
+    document.getElementById("submitBtn").onclick = async () => {
+      const d = (id) => document.getElementById(id).value;
+
+      const payload = {
+        companyName: d("companyName"),
+        materialsType: d("materialsType"),
+        dateISO: d("dateISO").replace(/-/g, "/"),
+        fromJobSite: d("fromJobSite"),
+        toJobSite: d("toJobSite"),
+        carPlate: d("carPlate"),
+        driver: d("driver"),
+        tokenSite: d("tokenSite"),
+        tonnage: d("tonnage"),
+        tokenLast4: d("tokenLast4"),
+        signatureDataURL: document.getElementById("sigPad").outerHTML,
+      };
+
+      showToast("Submitting...");
+      loader.classList.add("active");
+
+      try {
+        const res = await fetch(scriptBaseURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const text = await res.text();
+        const data = JSON.parse(text.startsWith("<") ? "{}" : text);
+        showToast(data.message || "✅ Record saved successfully!");
+      } catch (err) {
+        console.error("⚠️ Submission error:", err);
+        showToast("⚠️ Submission failed");
+      } finally {
+        loader.classList.remove("active");
+      }
     };
-    sel("companyName", data.companies);
-    sel("materialsType", data.materials);
-    sel("fromJobSite", data.fromJobSites);
-    sel("toJobSite", data.toJobSites);
-    sel("carPlate", data.carPlates);
-    sel("driver", data.drivers);
-    sel("tokenSite", data.tokenSites);
-    showToast("✅ loaded successfully");
-  } catch (err) {
-    console.error("Load error:", err);
-    showToast("⚠️ Error loading options");
-  } finally {
-    loader.classList.remove("active");
-  }
-}
 
+    window.onload = loadOptions;
+  </script>
 </body>
 </html>
