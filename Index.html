@@ -6,9 +6,8 @@
   <title>Job Dispatch & Disposal</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-
   <style>
-    body { margin:0; font-family:'Inter',sans-serif; background:#f9fafb; color:#1f2937; }
+    body{margin:0;font-family:'Inter',sans-serif;background:#f9fafb;color:#1f2937;}
     .wrap{max-width:700px;margin:50px auto;padding:20px;}
     .card{background:#fff;border-radius:14px;box-shadow:0 4px 20px rgba(0,0,0,0.05);padding:36px;}
     h1{margin:0 0 8px;font-size:24px;font-weight:600;}
@@ -26,7 +25,6 @@
     .btn:hover{background:#f25c41;}
     .toast{position:fixed;bottom:20px;right:20px;background:#1f2937;color:#fff;padding:12px 20px;border-radius:8px;opacity:0;transform:translateY(20px);transition:all 0.4s ease;}
     .toast.show{opacity:1;transform:translateY(0);}
-    @media(max-width:700px){.card{padding:24px;}.wrap{margin:20px auto;}}
   </style>
 </head>
 
@@ -34,7 +32,7 @@
   <div class="wrap">
     <div class="card">
       <h1>Job Dispatch & Disposal</h1>
-      <div class="sub">All-in-one responsive form with live signature</div>
+      <div class="sub">All-in-one responsive form with e-signature</div>
 
       <div class="section">
         <div class="section-title">Company & Material</div>
@@ -74,27 +72,19 @@
   <div id="toast" class="toast"></div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxF9ADtBZf2aEhE2v-MOvFA_-UOQn8Lmyto2IlUoYQUuAZAT6FZ6f5qj2eSvFVFJvR5/exec";
+    const scriptBaseURL = "https://corsproxy.io/?" + encodeURIComponent("https://script.google.com/macros/s/AKfycbwkwpttAGbCu5Y0an3B7pqff-ErpSX8Jo1qGPeVU5zM1q_cVRt8XCFiTD79Bc2dbKNx/exec");
 
-    function showToast(msg){
-      const t=document.getElementById("toast");
-      t.textContent=msg;t.classList.add("show");
-      setTimeout(()=>t.classList.remove("show"),3000);
-    }
+    function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3000);}
 
     async function loadOptions(){
       try{
-        const res=await fetch(`${API_URL}?action=getFieldOptions`);
-        const data=await res.json();
+        const res=await fetch(`${scriptBaseURL}?type=getFieldOptions`,{cache:"no-store"});
+        const text=await res.text();
+        const data=JSON.parse(text);
         const sel=(id,arr)=>{const el=document.getElementById(id);el.innerHTML='<option value="">Select...</option>';arr.forEach(v=>el.innerHTML+=`<option>${v}</option>`);}
-        sel("companyName",data.companies);
-        sel("materialsType",data.materials);
-        sel("jobSite",data.jobSites);
-        sel("driver",data.drivers);
-        sel("toSiteToken",data.toSiteTokens);
-        sel("fromSiteToken",data.fromSiteTokens);
-        showToast("Options loaded");
-      }catch(err){showToast("Error loading options: "+err.message);}
+        sel("companyName",data.companies);sel("materialsType",data.materials);sel("jobSite",data.jobSites);sel("driver",data.drivers);sel("toSiteToken",data.toSiteTokens);sel("fromSiteToken",data.fromSiteTokens);
+        showToast("✅ Options loaded successfully");
+      }catch(err){console.error("Load error:",err);showToast("⚠️ Error loading options");}
     }
     loadOptions();
 
@@ -103,9 +93,12 @@
       const payload={companyName:d("companyName"),materialsType:d("materialsType"),dateISO:d("dateISO").replace(/-/g,'/'),
       jobSite:d("jobSite"),driver:d("driver"),tonnage:d("tonnage"),tokenLast4:d("tokenLast4"),toSiteToken:d("toSiteToken"),fromSiteToken:d("fromSiteToken"),signatureDataURL:document.getElementById("sigPad").outerHTML};
       showToast("Submitting...");
-      const res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-      const data=await res.json();
-      showToast(data.message||"Done!");
+      try{
+        const res=await fetch(scriptBaseURL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+        const text=await res.text();console.log(text);
+        const data=JSON.parse(text);
+        showToast(data.message||"✅ Record saved!");
+      }catch(err){showToast("⚠️ Submission failed");console.error(err);}
     };
   </script>
 </body>
