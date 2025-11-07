@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dispatch & Disposal – LBD Engineering Pte Ltd</title>
 
-  <!-- Fonts -->
+  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
   <style>
     body {
@@ -96,19 +97,18 @@
       font-size: 15px;
     }
 
-    .row-inline {
-      display: flex;
-      gap: 16px;
-    }
-
-    .row-inline > div {
-      flex: 1;
-    }
-
     input:focus, select:focus {
       border-color: #DC4128;
       outline: none;
       box-shadow: 0 0 0 3px rgba(220, 65, 40, 0.15);
+    }
+
+    /* Horizontal alignment fix */
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: end;
     }
 
     canvas {
@@ -117,6 +117,31 @@
       border-radius: 12px;
       background: #fff;
       cursor: crosshair;
+    }
+
+    .sig-actions {
+      text-align: right;
+      margin-top: 8px;
+    }
+
+    .icon-btn {
+      background: #DC4128;
+      border: none;
+      color: #fff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.3s ease;
+    }
+
+    .icon-btn:hover {
+      background: #f25c41;
+      transform: rotate(-20deg);
     }
 
     .btn {
@@ -190,7 +215,7 @@
       .card { padding: 24px; }
       .wrap { margin: 20px auto; }
       .btn { width: 100%; }
-      .row-inline { flex-direction: column; }
+      .field-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -219,16 +244,29 @@
       <!-- Site, Vehicle & Time -->
       <div class="section">
         <div class="section-title">Site & Vehicle</div>
-        <div class="row-inline">
+
+        <div class="field-row">
           <div>
-            <label>From Job Site</label><select id="fromJobSite"></select>
-            <label>Start Time</label><input type="time" id="startTime" />
+            <label>From Job Site</label>
+            <select id="fromJobSite"></select>
           </div>
           <div>
-            <label>To Job Site</label><select id="toJobSite"></select>
-            <label>End Time</label><input type="time" id="endTime" />
+            <label>Start Time</label>
+            <input type="time" id="startTime" />
           </div>
         </div>
+
+        <div class="field-row">
+          <div>
+            <label>To Job Site</label>
+            <select id="toJobSite"></select>
+          </div>
+          <div>
+            <label>End Time</label>
+            <input type="time" id="endTime" />
+          </div>
+        </div>
+
         <label>Car Plate</label><select id="carPlate"></select>
       </div>
 
@@ -245,7 +283,11 @@
       <div class="section">
         <div class="section-title">E-Signature</div>
         <canvas id="signaturePad" height="180"></canvas>
-        <button type="button" class="btn" id="clearSignature" style="margin-top:10px;background:#6b7280;">Clear Signature</button>
+        <div class="sig-actions">
+          <button type="button" id="clearSignature" class="icon-btn" title="Redo Signature">
+            <i class="fa-solid fa-rotate-right"></i>
+          </button>
+        </div>
       </div>
 
       <button class="btn" id="submitBtn">Submit</button>
