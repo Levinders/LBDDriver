@@ -349,48 +349,80 @@
     clearBtn.addEventListener("click", () => signaturePad.clear());
 
     document.getElementById("submitBtn").onclick = async () => {
-      if (signaturePad.isEmpty()) {
-        showToast("⚠️ Please draw your signature before submitting.");
-        return;
-      }
+  const d = (id) => document.getElementById(id).value.trim();
 
-      const d = id => document.getElementById(id).value;
-      const payload = {
-        companyName: d("companyName"),
-        materialsType: d("materialsType"),
-        dateISO: d("dateISO").replace(/-/g, "/"),
-        fromJobSite: d("fromJobSite"),
-        toJobSite: d("toJobSite"),
-        carPlate: d("carPlate"),
-        startTime: d("startTime"),
-        endTime: d("endTime"),
-        driver: d("driver"),
-        tokenSite: d("tokenSite"),
-        tonnage: d("tonnage"),
-        tokenLast4: d("tokenLast4"),
-        signatureDataURL: signaturePad.toDataURL("image/png"),
-      };
+  // ✅ Required field validation
+  const requiredFields = [
+    "companyName",
+    "materialsType",
+    "dateISO",
+    "fromJobSite",
+    "toJobSite",
+    "carPlate",
+    "startTime",
+    "endTime",
+    "driver",
+    "tokenSite",
+    "tonnage",
+    "tokenLast4",
+  ];
 
-      showToast("Submitting...");
-      loader.classList.add("active");
+  const missing = requiredFields.filter((id) => !d(id));
 
-      try {
-        const res = await fetch(scriptBaseURL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        const text = await res.text();
-        const data = JSON.parse(text.startsWith("<") ? "{}" : text);
-        showToast(data.message || "✅ Record saved successfully!");
-        setTimeout(() => window.location.reload(), 2000);
-      } catch (err) {
-        console.error("⚠️ Submission error:", err);
-        showToast("⚠️ Submission failed");
-      } finally {
-        loader.classList.remove("active");
-      }
-    };
+  if (missing.length > 0) {
+    const firstMissing = document.getElementById(missing[0]);
+    firstMissing.scrollIntoView({ behavior: "smooth", block: "center" });
+    firstMissing.focus();
+    showToast("⚠️ Please fill out all required fields before submitting.");
+    return;
+  }
+
+  // ✅ Check signature
+  if (signaturePad.isEmpty()) {
+    showToast("⚠️ Please draw your signature before submitting.");
+    return;
+  }
+
+  // ✅ Build payload
+  const payload = {
+    companyName: d("companyName"),
+    materialsType: d("materialsType"),
+    dateISO: d("dateISO").replace(/-/g, "/"),
+    fromJobSite: d("fromJobSite"),
+    toJobSite: d("toJobSite"),
+    carPlate: d("carPlate"),
+    startTime: d("startTime"),
+    endTime: d("endTime"),
+    driver: d("driver"),
+    tokenSite: d("tokenSite"),
+    tonnage: d("tonnage"),
+    tokenLast4: d("tokenLast4"),
+    signatureDataURL: signaturePad.toDataURL("image/png"),
+  };
+
+  showToast("Submitting...");
+  loader.classList.add("active");
+
+  try {
+    const res = await fetch(scriptBaseURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const text = await res.text();
+    const data = JSON.parse(text.startsWith("<") ? "{}" : text);
+    showToast(data.message || "✅ Record saved successfully!");
+
+    // ⏳ Auto-refresh after short delay
+    setTimeout(() => window.location.reload(), 2000);
+  } catch (err) {
+    console.error("⚠️ Submission error:", err);
+    showToast("⚠️ Submission failed");
+  } finally {
+    loader.classList.remove("active");
+  }
+};
 
     window.onload = loadOptions;
   </script>
