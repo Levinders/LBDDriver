@@ -373,13 +373,13 @@
     const firstMissing = document.getElementById(missing[0]);
     firstMissing.scrollIntoView({ behavior: "smooth", block: "center" });
     firstMissing.focus();
-    showToast("⚠️ Please fill out all required fields before submitting.");
+    showToast("⚠️ Required fields");
     return;
   }
 
   // ✅ Check signature
   if (signaturePad.isEmpty()) {
-    showToast("⚠️ Please draw your signature before submitting.");
+    showToast("⚠️ Signature required");
     return;
   }
 
