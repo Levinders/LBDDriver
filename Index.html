@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dispatch & Disposal</title>
+  <title>Dispatch & Disposal – LBD Engineering Pte Ltd</title>
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
 
   <style>
     body {
@@ -17,9 +16,35 @@
       color: #1f2937;
     }
 
+    .header {
+      background: #fff;
+      text-align: center;
+      padding: 24px 16px;
+      border-bottom: 2px solid #DC4128;
+    }
+
+    .header img {
+      width: 80px;
+      height: auto;
+      margin-bottom: 10px;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      color: #DC4128;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .header p {
+      font-size: 13px;
+      color: #555;
+      margin: 4px 0 0;
+    }
+
     .wrap {
       max-width: 700px;
-      margin: 50px auto;
+      margin: 40px auto;
       padding: 20px;
     }
 
@@ -30,9 +55,9 @@
       padding: 36px;
     }
 
-    h1 {
+    h2 {
       margin: 0 0 8px;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 600;
     }
 
@@ -71,42 +96,27 @@
       font-size: 15px;
     }
 
+    .row-inline {
+      display: flex;
+      gap: 16px;
+    }
+
+    .row-inline > div {
+      flex: 1;
+    }
+
     input:focus, select:focus {
       border-color: #DC4128;
       outline: none;
       box-shadow: 0 0 0 3px rgba(220, 65, 40, 0.15);
     }
 
-    .sig-pad {
+    canvas {
+      width: 100%;
       border: 2px dashed #e5e7eb;
       border-radius: 12px;
-      padding: 20px;
-      text-align: center;
       background: #fff;
-    }
-
-    #typedSignature {
-      font-family: 'Great Vibes', cursive;
-      font-size: 42px;
-      color: #000;
-      position: relative;
-      display: inline-block;
-      margin-bottom: 6px;
-      transition: all 0.3s ease;
-    }
-
-    #typedSignature svg {
-      position: absolute;
-      bottom: -10px;
-      left: 0;
-      width: 100%;
-      height: 20px;
-    }
-
-    #typedDate {
-      font-size: 13px;
-      color: #555;
-      margin-top: 16px;
+      cursor: crosshair;
     }
 
     .btn {
@@ -174,24 +184,28 @@
       animation: spin 1s linear infinite;
     }
 
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     @media (max-width: 700px) {
       .card { padding: 24px; }
       .wrap { margin: 20px auto; }
       .btn { width: 100%; }
+      .row-inline { flex-direction: column; }
     }
   </style>
 </head>
 
 <body>
+  <!-- ✅ LBD Branding -->
+  <div class="header">
+    <img src="https://raw.githubusercontent.com/Levinders/LBDDriver/refs/heads/main/logo.png" alt="LBD Logo" />
+    <h1>LBD Engineering Pte Ltd</h1>
+    <p>430 Tagore Industrial Avenue, Sindo Industrial Estate, Singapore 787810</p>
+  </div>
+
   <div class="wrap">
     <div class="card">
-      <h1>Dispatch & Disposal</h1>
+      <h2>Dispatch & Disposal</h2>
       <div class="sub">Complete all fields and submit</div>
 
       <!-- Company & Material -->
@@ -202,11 +216,19 @@
         <label>Date</label><input type="date" id="dateISO" />
       </div>
 
-      <!-- Site & Vehicle -->
+      <!-- Site, Vehicle & Time -->
       <div class="section">
         <div class="section-title">Site & Vehicle</div>
-        <label>From Job Site</label><select id="fromJobSite"></select>
-        <label>To Job Site</label><select id="toJobSite"></select>
+        <div class="row-inline">
+          <div>
+            <label>From Job Site</label><select id="fromJobSite"></select>
+            <label>Start Time</label><input type="time" id="startTime" />
+          </div>
+          <div>
+            <label>To Job Site</label><select id="toJobSite"></select>
+            <label>End Time</label><input type="time" id="endTime" />
+          </div>
+        </div>
         <label>Car Plate</label><select id="carPlate"></select>
       </div>
 
@@ -219,28 +241,23 @@
         <label>Token (Last 4)</label><input type="text" id="tokenLast4" maxlength="4" />
       </div>
 
-      <!-- E-Signature -->
+      <!-- Draw-to-Sign -->
       <div class="section">
         <div class="section-title">E-Signature</div>
-        <div class="sig-pad" id="sigPad">
-          <div id="typedSignature">Sample Name
-            <svg><path d="M0 10 Q50 0, 120 10 T260 10" stroke="#000" stroke-width="1.2" fill="transparent"/></svg>
-          </div>
-          <div id="typedDate">YYYY/MM/DD</div>
-        </div>
+        <canvas id="signaturePad" height="180"></canvas>
+        <button type="button" class="btn" id="clearSignature" style="margin-top:10px;background:#6b7280;">Clear Signature</button>
       </div>
 
       <button class="btn" id="submitBtn">Submit</button>
     </div>
   </div>
 
-  <!-- Toast -->
+  <!-- Toast + Loader -->
   <div id="toast" class="toast"></div>
+  <div id="loader" class="loader-overlay"><div class="spinner"></div></div>
 
-  <!-- Loader -->
-  <div id="loader" class="loader-overlay">
-    <div class="spinner"></div>
-  </div>
+  <!-- SignaturePad Library -->
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 
   <script>
     const scriptBaseURL =
@@ -248,30 +265,29 @@
       encodeURIComponent("https://script.google.com/macros/s/AKfycbw4SuEZBVxXv-0XAmxqAgEYhIIPQPmphj9U-94SAmfzdxJaACm9b6QD68hBiuMd5N1m/exec");
 
     const loader = document.getElementById("loader");
+    const toast = document.getElementById("toast");
+    const canvas = document.getElementById("signaturePad");
+    const clearBtn = document.getElementById("clearSignature");
+    const signaturePad = new SignaturePad(canvas, { backgroundColor: "white" });
 
     function showToast(msg) {
-      const t = document.getElementById("toast");
-      t.textContent = msg;
-      t.classList.add("show");
-      setTimeout(() => t.classList.remove("show"), 3000);
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3000);
     }
 
-    /** ✅ Load dropdown data */
     async function loadOptions() {
       loader.classList.add("active");
       try {
         const res = await fetch(`${scriptBaseURL}?type=getFieldOptions`, { cache: "no-store" });
         const text = await res.text();
-        if (text.startsWith("<")) throw new Error("Invalid JSON response (HTML received)");
         const data = JSON.parse(text);
-
         const sel = (id, arr) => {
           const el = document.getElementById(id);
           if (!el) return;
           el.innerHTML = '<option value="">Select...</option>';
           arr.forEach(v => (el.innerHTML += `<option>${v}</option>`));
         };
-
         sel("companyName", data.companies);
         sel("materialsType", data.materials);
         sel("fromJobSite", data.fromJobSites);
@@ -279,8 +295,7 @@
         sel("carPlate", data.carPlates);
         sel("driver", data.drivers);
         sel("tokenSite", data.tokenSites);
-
-        showToast("✅ loaded successfully");
+        showToast("✅ Loaded successfully");
       } catch (err) {
         console.error("⚠️ Load error:", err);
         showToast("⚠️ Error loading options");
@@ -289,27 +304,15 @@
       }
     }
 
-    /** ✅ Live signature update */
-    const driverSelect = document.getElementById("driver");
-    const typedSignature = document.getElementById("typedSignature");
-    const typedDate = document.getElementById("typedDate");
+    clearBtn.addEventListener("click", () => signaturePad.clear());
 
-    function updateSignature() {
-      const name = driverSelect.value.includes('-')
-        ? driverSelect.value.split('-').pop().trim()
-        : driverSelect.value || "Sample Name";
-      const today = new Date();
-      const formatted = `${today.getFullYear()}/${String(today.getMonth() + 1).padStart(2, '0')}/${String(today.getDate()).padStart(2, '0')}`;
-      typedSignature.innerHTML = `${name}<svg><path d="M0 10 Q50 0, 120 10 T260 10" stroke="#000" stroke-width="1.2" fill="transparent"/></svg>`;
-      typedDate.textContent = formatted;
-    }
-
-    driverSelect.addEventListener("change", updateSignature);
-
-    /** ✅ Form submission */
     document.getElementById("submitBtn").onclick = async () => {
-      const d = (id) => document.getElementById(id).value;
+      if (signaturePad.isEmpty()) {
+        showToast("⚠️ Please draw your signature before submitting.");
+        return;
+      }
 
+      const d = id => document.getElementById(id).value;
       const payload = {
         companyName: d("companyName"),
         materialsType: d("materialsType"),
@@ -317,11 +320,13 @@
         fromJobSite: d("fromJobSite"),
         toJobSite: d("toJobSite"),
         carPlate: d("carPlate"),
+        startTime: d("startTime"),
+        endTime: d("endTime"),
         driver: d("driver"),
         tokenSite: d("tokenSite"),
         tonnage: d("tonnage"),
         tokenLast4: d("tokenLast4"),
-        signatureDataURL: document.getElementById("sigPad").outerHTML,
+        signatureDataURL: signaturePad.toDataURL("image/png"),
       };
 
       showToast("Submitting...");
@@ -336,12 +341,7 @@
         const text = await res.text();
         const data = JSON.parse(text.startsWith("<") ? "{}" : text);
         showToast(data.message || "✅ Record saved successfully!");
-
-        // ⏳ Auto-refresh after a short delay (so the toast is visible)
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
-
+        setTimeout(() => window.location.reload(), 2000);
       } catch (err) {
         console.error("⚠️ Submission error:", err);
         showToast("⚠️ Submission failed");
